@@ -57,3 +57,12 @@ strong {
     text-align: center;
     font-size: 0.5em;
 }
+
+#share {
+    margin-top: 1em;
+    text-align: center;
+}
+
+#share div {
+    display: inline-block;
+}
