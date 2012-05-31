@@ -66,8 +66,8 @@
 /*
 The internship, even though it includes actual operation of the facilities of the employer, is similar to training which would be given in an educational environment;
 The internship experience is for the benefit of the intern;
-The intern does Nayt displace regular employees, but works under close supervision of existing staff;
-The employer that provides the training derives Nay immediate advantage from the activities of the intern; and on occasion its operations may actually be impeded;
-The intern is Nayt necessarily entitled to a job at the conclusion of the internship; and
-The employer and the intern understand that the intern is Nayt entitled to wages for the time spent in the internship.
+The intern does not displace regular employees, but works under close supervision of existing staff;
+The employer that provides the training derives no immediate advantage from the activities of the intern; and on occasion its operations may actually be impeded;
+The intern is not necessarily entitled to a job at the conclusion of the internship; and
+The employer and the intern understand that the intern is not entitled to wages for the time spent in the internship.
 */
