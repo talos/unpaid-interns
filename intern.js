@@ -1,73 +1,108 @@
+/*
+ * Copyright (C) 2012 John Krauss
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
 /*jslint browser: true*/
 /*globals $*/
 
 (function () {
     "use strict";
-
-    var $question = $('#question'),
+    var QUESTIONS_LOCATION = "data/questions.tsv",
+        FIRST_QUESTION = "1",
+        BUTTON_COLUMNS = ['Aye', 'Nay', 'Dunno'],
+        MESSAGE_COLUMN = 'Message',
+        BUTTON_CLASSES = 'btn btn-inverse btn-large',
+        BUTTON_TEMPLATE = '<button class="' + BUTTON_CLASSES + '" />',
+        $question = $('#question'),
         $choices = $('#choices'),
-        $legal = $('#legal'),
-        $illegal = $('#illegal'),
-        $reset = $('#reset'),
+        $endgame = $('#endgame'),
+        $reset = $('#reset a'),
+        questions,
 
-        ask = function (question, answer, choices) {
-            var dfd = new $.Deferred();
-            $question.text(question);
+        /**
+         * Display the endgame scenario.
+         */
+        endgame = function () {
+            $endgame.show();
+        },
+
+        /**
+         * Input is a raw multi-line TSV as a string.  Output is a JSON
+         * object with the first column used as the key for the hash.
+         */
+        parseTSV = function (tsv) {
+            var parsed = {},
+                rows = tsv.split('\n'),
+                header = rows.shift().split('\t');
+            $.each(rows, function (i, row) {
+                var cols = row.split('\t'),
+                    question = {};
+                $.each(cols, function (i, col) {
+                    question[header[i]] = col;
+                });
+                // assume first data column is ID
+                parsed[cols[0]] = question;
+            });
+            return parsed;
+        },
+
+        /**
+         * Ask a question.
+         */
+        ask = function (id) {
+            var question = questions[id];
+            $question.text(question[MESSAGE_COLUMN]);
             $choices.empty();
-            $.each(choices, function (idx, choice) {
-                $choices.append($("<button />")
-                    .text(choice)
-                    .on('click', function () {
-                        if (answer === choice) {
-                            dfd.resolve();
-                        } else {
-                            dfd.reject(question, answer);
-                        }
-                    }));
+            $.each(BUTTON_COLUMNS, function (i, button) {
+                var nextId = question[button];
+                if (nextId !== '') {
+                    $(BUTTON_TEMPLATE)
+                        .text(button)
+                        .on('click', function () {
+                            ask(nextId);
+                            // show the reset button after any click.
+                            $reset.fadeIn();
+                        }).appendTo($choices);
+                }
             });
-            return dfd.promise();
+            if ($choices.is(':empty')) {
+                endgame();
+            }
         },
 
-        qa = function (question, answer) {
-            return function () {
-                return ask(question, answer, ['Aye', 'Nay']);
-            };
-        },
-
-        run = function () {
-            $illegal.hide();
-            $legal.hide();
-
-            var dfd = new $.Deferred(),
-                questionnaire = dfd.pipe(qa('Are you receiving training?', 'Aye'))
-                    .pipe(qa("Is your training similar to what you would get at school?", 'Aye'))
-                    .pipe(qa("Are you displacing regular employees?", 'Nay'))
-                    .pipe(qa("Are you closely supervised?", 'Aye'))
-                    .pipe(qa("Are you entitled to a job at your office when the internship is over?", 'Nay'));
-
-            // Start questionnaire
-            dfd.resolve();
-
-            questionnaire.done(function () {
-                $legal.fadeIn();
-            }).fail(function () {
-                $illegal.fadeIn();
-            }).always(function () {
-                $question.empty();
-                $choices.empty();
-            });
+        /**
+         * Start the questionnaire.
+         */
+        start = function () {
+            // hide the reset button at start
+            $reset.fadeOut();
+            $endgame.hide();
+            ask(FIRST_QUESTION);
         };
 
-    run();
-    $reset.on('click', run);
+    // load questions
+    $.get(QUESTIONS_LOCATION).done(function (resp) {
+        // stateful
+        questions = parseTSV(resp);
+        start();
+        $reset.on('click', start);
+    });
 }());
-
-
-/*
-The internship, even though it includes actual operation of the facilities of the employer, is similar to training which would be given in an educational environment;
-The internship experience is for the benefit of the intern;
-The intern does not displace regular employees, but works under close supervision of existing staff;
-The employer that provides the training derives no immediate advantage from the activities of the intern; and on occasion its operations may actually be impeded;
-The intern is not necessarily entitled to a job at the conclusion of the internship; and
-The employer and the intern understand that the intern is not entitled to wages for the time spent in the internship.
-*/

@@ -1,74 +1,97 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
     <head>
+        <meta charset="utf-8">
         <title>Is your unpaid internship illegal?</title>
-        <link type="text/css" rel="stylesheet" href="intern.css" />
-          <script type="text/javascript">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Determine whether your unpaid internship is illegal.">
+        <meta name="author" content="See CONTRIBUTORS.md">
+        <meta property="og:title" content="Is your unpaid internship illegal?" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="http://blog.accursedware.com/unpaid-interns/" />
+        <meta property="og:description" content="The US Department of Labor has clear guidelines establishing the legality of an unpaid internship.  You probably should be gettin' paid." />
+        <meta property="og:image" content="http://blog.accursedware.com/unpaid-interns/preview.png" />
+        <link type="text/css" rel="stylesheet" href="css/bootstrap.css" />
+        <link type="text/css" rel="stylesheet" href="css/interns.css" />
+        <link type="text/plain" href="data/questions.tsv" id="questions" />
 
-          var _gaq = _gaq || [];
-          _gaq.push(['_setAccount', 'UA-20153319-3']);
-          _gaq.push(['_trackPageview']);
+        <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+          <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
 
-          (function() {
-              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-          })();
-
-          </script>
-
-          <meta property="og:title" content="Is your unpaid internship illegal?" />
-          <meta property="og:type" content="website" />
-          <meta property="og:url" content="http://blog.accursedware.com/unpaid-interns/" />
-          <meta property="og:description" content="The US Department of Labor has clear guidelines establishing the legality of an unpaid internship.  You probably should be gettin' paid." />
-          <meta property="og:image" content="http://blog.accursedware.com/unpaid-interns/preview.png" />
     </head>
 
     <body>
+        <a href="http://github.com/talos/unpaid-interns"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>
 
-        <div id="content">
-            <h1>Is your unpaid internship <strong>illegal</strong>?</h1>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span3"></div>
+                <div class="span6 well glow">
+                    <h1>Is your unpaid internship <strong>illegal</strong>?</h1>
 
-            <div>
-                The US Department of Labor has clear <a href="http://www.dol.gov/whd/regs/compliance/whdfs71.htm">guidelines</a> to establish the legality of an unpaid internship.
+                    <p>The US Department of Labor has clear <a href="http://www.dol.gov/whd/regs/compliance/whdfs71.htm">guidelines</a> to establish the legality of an unpaid internship.</p>
+
+                    <hr />
+
+                    <p id="question">
+                    </p>
+
+                    <div id="choices-container">
+                        <div id="choices" class="btn-group">
+                        </div>
+                    </div>
+
+                    <div id="endgame">
+                        <div class="diagram">
+                        </div>
+                        <form id="survey" action="">
+                            <p>It&#39;s possible that your employer has used your labor illegally.</p>
+                            <p>Unfortunately, there isn&#39;t a standard process for reporting employers to the Department of Labor.  You could get in touch with your employer and ask for back pay; if they refuse or don&#39;t reply, then you can get in touch with your state's Department of Labor.</p>
+                            <p>Please consider sharing some basic information (anonymously, of course) about your employer and yourself, to help us shed light on where these practices are most widespread, and who they affect most.</p>
+
+                            <input type="submit" value="Submit" />
+                        </form>
+                    </div>
+
+                    <hr />
+
+                    <div id="reset">
+                        <a class="btn btn-danger btn-mini" href="javascript:void(0)" style="display:none;">Reset</a>
+                    </div>
+                </div>
+                <div class="span3"></div>
             </div>
-
-            <hr noshade />
-
-            <div id="question">
+            <div id="share">
+                <!-- AddThis Button BEGIN -->
+                <div class="addthis_toolbox addthis_default_style ">
+                    <a class="addthis_button_preferred_1"></a>
+                    <a class="addthis_button_preferred_2"></a>
+                    <a class="addthis_button_preferred_3"></a>
+                    <a class="addthis_button_preferred_4"></a>
+                    <a class="addthis_button_compact"></a>
+                    <a class="addthis_counter addthis_bubble_style"></a>
+                </div>
+                <!-- AddThis Button END -->
             </div>
-
-            <div id="choices">
-            </div>
-
-            <div id="legal" style="display: none;">
-                It's OK that you're not getting paid.
-            </div>
-            <div id="illegal" style="display: none;">
-                Your unpaid internship may be illegal.
-                You can contact the U.S. Department of Labor Wage and Hour Division at 1-866-4-USWAGE.
-            </div>
-
-            <hr noshade />
-
-            <div id="reset"><a href="javascript:void(0)">Reset</a></div>
-
         </div>
+
         <script type='text/javascript' src="jquery.js"></script>
         <script type='text/javascript' src="intern.js"></script>
-        <a href="http://github.com/talos/unpaid-interns"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub"></a>
-        <div id="share">
-            <!-- AddThis Button BEGIN -->
-            <div class="addthis_toolbox addthis_default_style ">
-                <a class="addthis_button_preferred_1"></a>
-                <a class="addthis_button_preferred_2"></a>
-                <a class="addthis_button_preferred_3"></a>
-                <a class="addthis_button_preferred_4"></a>
-                <a class="addthis_button_compact"></a>
-                <a class="addthis_counter addthis_bubble_style"></a>
-            </div>
-            <!-- AddThis Button END -->
-        </div>
         <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f8c46971561faa6"></script>
+        <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-20153319-3']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+        </script>
     </body>
 </html>
