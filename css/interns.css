@@ -2,6 +2,12 @@ body {
     padding: 1em;
 }
 
+#survey {
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #question {
     text-align: center;
 }
