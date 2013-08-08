@@ -26,11 +26,14 @@
 (function () {
     "use strict";
     var QUESTIONS_LOCATION = "data/questions.tsv",
+        VERSION = "1",
         FIRST_QUESTION = "1",
         BUTTON_COLUMNS = ['Aye', 'Nay', 'Dunno'],
         MESSAGE_COLUMN = 'Message',
         BUTTON_CLASSES = 'btn btn-inverse btn-large',
         BUTTON_TEMPLATE = '<button class="' + BUTTON_CLASSES + '" />',
+        RECORD_HOST = 'http://intern-labor-survey.herokuapp.com/',
+        RECORD_ENDPOINT = '',
         $question = $('#question'),
         $choices = $('#choices'),
         $endgame = $('#endgame'),
@@ -65,6 +68,17 @@
         },
 
         /**
+         * Record the response to a question.
+         */
+        record = function (question, button) {
+            $.ajax({
+                url: RECORD_HOST + RECORD_ENDPOINT,
+                data: {q: question, a: button, v: VERSION},
+                crossDomain: true
+            });
+        },
+
+        /**
          * Ask a question.
          */
         ask = function (id) {
@@ -77,6 +91,7 @@
                     $(BUTTON_TEMPLATE)
                         .text(button)
                         .on('click', function () {
+                            record(question[MESSAGE_COLUMN], button);
                             ask(nextId);
                             // show the reset button after any click.
                             $reset.fadeIn();
