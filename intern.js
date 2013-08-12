@@ -21,7 +21,7 @@
  */
 
 /*jslint browser: true*/
-/*globals $*/
+/*globals $, d3*/
 
 (function () {
     "use strict";
@@ -38,7 +38,7 @@
         $choices = $('#choices'),
         $endgame = $('#endgame'),
         $reset = $('#reset a'),
-        questions,
+        lastRow = 0,
 
         /**
          * Display the endgame scenario.
@@ -68,6 +68,32 @@
         },
 
         /**
+         * Convert questions to a tree.
+         */
+        asTree = function (questions) {
+            var parsed = [], k, i, b, q;
+
+            for (k in questions) {
+                if (questions.hasOwnProperty(k)) {
+                    q = questions[k];
+
+                    for (i = 0; i < BUTTON_COLUMNS.length; i += 1) {
+                        b = BUTTON_COLUMNS[i];
+                        if (questions.hasOwnProperty(q[b])) {
+                            q[b] = questions[q[b]];
+                        } else {
+                            delete q[b];
+                        }
+                    }
+
+                    parsed.push(q);
+                }
+            }
+
+            return parsed;
+        },
+
+        /**
          * Record the response to a question.
          */
         record = function (question, button) {
@@ -81,7 +107,7 @@
         /**
          * Ask a question.
          */
-        ask = function (id) {
+        ask = function (id, questions) {
             var question = questions[id];
             $question.text(question[MESSAGE_COLUMN]);
             $choices.empty();
@@ -106,18 +132,85 @@
         /**
          * Start the questionnaire.
          */
-        start = function () {
+        start = function (first_question, questions) {
             // hide the reset button at start
             $reset.fadeOut();
             $endgame.hide();
-            ask(FIRST_QUESTION);
+            ask(first_question, questions);
+        },
+
+        makeCell = function (d, $row, choice) {
+            if (!d) {
+                return;
+            }
+            if (!d.Message) {
+                return;
+            }
+            var i, $el;
+
+            d.$el = $('<div />')
+                .addClass('response well glow ' +
+                          (choice ? choice.toLowerCase().replace(' ', '-') : ''))
+                .text(d.Message);
+            $row.append(d.$el);
+        },
+
+        makeRow = function () {
+            return $('<div />')
+                .addClass('row')
+                .appendTo('#flowchart');
+        },
+
+        visualize = function (first_question, questions) {
+            var tree = asTree(questions), i, d, j, $row, choice;
+
+            for (i = 0; i < tree.length; i += 1) {
+                d = tree[i];
+
+                if (!d.$el) {
+                    $row = makeRow();
+                    makeCell(tree[i], $row);
+                }
+
+                $row = makeRow();
+                for (j = 0; j < BUTTON_COLUMNS.length; j += 1) {
+                    choice = BUTTON_COLUMNS[j];
+                    makeCell(d[choice], $row, choice);
+                }
+            }
+            /*var svg = d3.select($('#flowchart')[0]).append('svg')
+                .attr('xmlns', 'http://www.w3.org/2000/svg'),
+                answers = svg.selectAll('.answers').data(questionsAsArray);
+
+            answers.enter()
+                .append('g')
+                .classed('answer', true)
+                .each(function (d, i) {
+                    var question = d.Message,
+                        width = 400,
+                        height = 50,
+                        y = i * height * 1.2,
+                        el = d3.select(this);
+                    el.attr('id', 'answer_' + d.ID);
+                    if (question) {
+                        el.append('svg:foreignObject').attr({
+                            width: width,
+                            height: height,
+                            y: y
+                        }).append('xhtml:body').attr({
+                        }).append('div').text(d.Message);
+                    }
+                });
+
+            answers.exit().remove();*/
         };
 
     // load questions
     $.get(QUESTIONS_LOCATION).done(function (resp) {
         // stateful
-        questions = parseTSV(resp);
-        start();
+        var questions = parseTSV(resp);
+        start(FIRST_QUESTION, questions);
+        visualize(FIRST_QUESTION, questions);
         $reset.on('click', start);
     });
 }());
