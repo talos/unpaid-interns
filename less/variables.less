@@ -33,7 +33,7 @@
 
 // Scaffolding
 // -------------------------
-@bodyBackground:        @black;
+@bodyBackground:        @white;
 @textColor:             @grayDark;
 
 
@@ -45,18 +45,18 @@
 
 // Typography
 // -------------------------
-@sansFontFamily:        "Helvetica Neue", Helvetica, Arial, sans-serif;
+@sansFontFamily:        Helvetica, Arial, sans-serif;
 @serifFontFamily:       Georgia, "Times New Roman", Times, serif;
 @monoFontFamily:        Menlo, Monaco, Consolas, "Courier New", monospace;
 
 @baseFontSize:          16px;
 @baseFontFamily:        @sansFontFamily;
 @baseLineHeight:        24px;
-@altFontFamily:         @serifFontFamily;
+@altFontFamily:         "Futura-CondensedExtraBold",Futura,Helvetica,Arial,sans-serif;
 
-@headingsFontFamily:    inherit; // empty to use BS default, @baseFontFamily
+@headingsFontFamily:    @altFontFamily; // empty to use BS default, @baseFontFamily
 @headingsFontWeight:    bold;    // instead of browser default, bold
-@headingsColor:         inherit; // empty to use BS default, @textColor
+@headingsColor:         #4a6fb0; // empty to use BS default, @textColor
 
 
 // Tables
@@ -140,7 +140,7 @@
 
 // Hr border color
 // -------------------------
-@hrBorder:                @grayLighter;
+@hrBorder:                @grayDark;
 
 
 // Navbar

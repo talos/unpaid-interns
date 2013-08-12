@@ -133,11 +133,11 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 24px;
   color: #333333;
-  background-color: #000000;
+  background-color: #ffffff;
 }
 a {
   color: #0088cc;
@@ -361,10 +361,11 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-family: inherit;
+  font-family: "Futura-CondensedExtraBold", Futura, Helvetica, Arial, sans-serif;
   font-weight: bold;
-  color: inherit;
+  color: #4a6fb0;
   text-rendering: optimizelegibility;
+  font-stretch: condensed;
 }
 h1 small,
 h2 small,
@@ -378,6 +379,7 @@ h6 small {
 h1 {
   font-size: 30px;
   line-height: 48px;
+  text-transform: uppercase;
 }
 h1 small {
   font-size: 18px;
@@ -477,7 +479,7 @@ dd {
 hr {
   margin: 24px 0;
   border: 0;
-  border-top: 1px solid #eeeeee;
+  border-top: 1px solid #333333;
   border-bottom: 1px solid #ffffff;
 }
 strong {
@@ -576,6 +578,9 @@ cite {
   border-radius: 3px;
 }
 .btn {
+  font-family: "Futura-CondensedExtraBold", Futura, Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-stretch: condensed;
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
@@ -586,7 +591,7 @@ cite {
   font-size: 16px;
   line-height: 24px;
   *line-height: 20px;
-  color: #333333;
+  color: #4a6fb0;
   text-align: center;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
   vertical-align: middle;

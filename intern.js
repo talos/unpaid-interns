@@ -30,7 +30,7 @@
         FIRST_QUESTION = "1",
         BUTTON_COLUMNS = ['Yes', 'No', "Not sure"],
         MESSAGE_COLUMN = 'Message',
-        BUTTON_CLASSES = 'btn btn-inverse btn-large',
+        BUTTON_CLASSES = 'btn btn-large',
         BUTTON_TEMPLATE = '<button class="' + BUTTON_CLASSES + '" />',
         RECORD_HOST = 'http://intern-labor-survey.herokuapp.com/',
         RECORD_ENDPOINT = '',
