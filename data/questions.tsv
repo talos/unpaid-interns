@@ -1,4 +1,4 @@
-ID	Message	Aye	Nay	Dunno
+ID	Message	Yes	No	Not sure
 1	Do you intern at a for-profit company?	2	1a	
 1a	Do you intern at a not-for-profit organization?	8	1b	
 1b	Do you intern for Congress?	Win	2	

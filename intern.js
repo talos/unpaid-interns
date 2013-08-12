@@ -28,7 +28,7 @@
     var QUESTIONS_LOCATION = "data/questions.tsv",
         VERSION = "1",
         FIRST_QUESTION = "1",
-        BUTTON_COLUMNS = ['Aye', 'Nay', 'Dunno'],
+        BUTTON_COLUMNS = ['Yes', 'No', "Not sure"],
         MESSAGE_COLUMN = 'Message',
         BUTTON_CLASSES = 'btn btn-inverse btn-large',
         BUTTON_TEMPLATE = '<button class="' + BUTTON_CLASSES + '" />',
