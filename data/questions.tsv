@@ -1,29 +1,30 @@
 ID	Message	Aye	Nay	Dunno
 1	Do you intern at a for-profit company?	2	1a	
-1a	Do you intern for a government office?	1b	2	
+1a	Do you intern at a not-for-profit organization?	8	1b	
 1b	Do you intern for Congress?	Win	2	
-2	Do you receive training similar to what you would get at school?	3	Fail	2a
-2a	Does the internship program build on a classroom or academic experience, rather than your employer's operations?	3	2b	2b
-2b	Does a college, university, secondary school, specialist, technical, vocational or trade school oversee the program and award vocational credit?	3	2c	
-2c	Does the internship teach skills that are useful in jobs outside of the employer's operation?	3	Fail	2d
-2d	Do you perform the routine work of the business on a regular basis?	Fail	3	2e
-2e	Is the business dependent upon your work?	Fail	3	2f
-2f	Are you engaged in productive work -- for example, filing, clerical work, or helping customers?	Fail	3	
+2	Do you receive training similar to what you would get at a college, school, or another educational institution?	3	Fail	2a
+2a	Does a college, university, secondary school, specialist, technical, vocational or trade school oversee the program and award vocational credit?	4	2b	
+2b	Does the internship teach skills that are useful in jobs outside of the employer's operation?	3	Fail	2c
+2c	Do you perform the routine work of the business on a regular basis?	Fail	3	2d
+2d	Is the business dependent upon your work?	Fail	3	2e
+2e	Are you engaged in productive work -- for example, filing, clerical work, or helping customers?	Fail	3	
 3	Are you the primary beneficiary of your training?	4	Fail	3a
 3a	Is an academic institution giving you credit for the internship?	4	3b	
 3b	Does your employer derive more than incidental benefit from your work?	Fail	4	4
-4	Are you displacing regular employees?	Fail	5	4a
-4a	Do you sometimes perform the same tasks as regular employees?	4b	5	
-4b	When you perform these tasks, are you under close and constant supervision?	5	Fail	4c
-4c	When you perform these tasks, do you receive the same level of supervision as regular workers?	Fail	4d	4d
-4d	Do you ever substitute for regular workers at specific (peak) time periods?	Fail	4e	4e
-4e	Would your employer need to hire more employees, or require their current staff to work more hours, if you weren't there?	Fail	5	5
+4	Do you sometimes perform the same tasks as regular employees?	4a	5	
+4a	When you perform these tasks, are you under close and constant supervision?	5	Fail	4b
+4b	When you perform these tasks, do you receive the same level of supervision as regular workers?	Fail	4c	4c
+4c	Do you ever substitute for regular workers at specific (peak) time periods?	Fail	4d	4d
+4d	Would your employer need to hire more employees, or require their current staff to work more hours, if you weren't there?	Fail	5	5
 5	Are your activities of immediate advantage to your employer?	Fail	6	5a
-5a	Do you sometimes impede the operations of your employer?	6	5b	5b
-5b	Is your employer dedicating any special resources (training, supervision) to your internship that could detract from their productivity?	6	Fail	6
-6	Are you entitled to a job at your office when the internship is over?	Fail	7	6a
+5a	Is your employer dedicating any special resources (training, supervision) to your internship that could detract from their productivity?	6	Fail	6
+6	Are you guaranteed a job at your office when the internship is over?	Fail	7	6a
 6a	Is there a direct connection between your completion of the internship and a job offer?	Fail	7	6b
-6b	Is the internship a "trial period" for your employment?	Fail	7	6c
-7	Were you notified, in writing, that you will not receive wages and are not considered an employee?	Win	Fail	
+6b	Does your organization consider the internship to be a "trial period" for your employment?	Fail	7	6c
+7	Were you notified prior to starting your position, in writing, that you will not receive wages and are not considered an employee?	Win	Fail	
+8	Are you interning full-time?	Fail	8a	
+8a	Have you been working part-time regularly for the long term — over six months?	Fail	8b	
+8b	Is your internship for civic, humanitarian, or charitable purposes?	Volunteer	Fail	
 Fail	Your unpaid internship may be illegal.			
 Win	Your internship most likely passes the federal Department of Labor's test for a legal unpaid internship; however, your state may have a more stringent test.			
+Volunteer	Your internship is a volunteer position.			
