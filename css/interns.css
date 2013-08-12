@@ -7,6 +7,7 @@ body {
     width: 500px;
     margin-left: auto;
     margin-right: auto;
+    text-align: justify;
 }
 
 #question {
@@ -21,6 +22,7 @@ div.btn-group {
 }
 
 #choices-container {
+    padding-top: 1em;
     text-align: center;
 }
 
@@ -44,4 +46,8 @@ h1 strong {
 .glow {
     border: 2px solid #ccc;
     box-shadow: 0px 0px 8px #ccc;
+}
+
+#start {
+    text-align: center;
 }
