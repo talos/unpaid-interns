@@ -68,6 +68,6 @@ h1 strong {
     box-shadow: 0px 0px 8px #ccc;
 }
 
-#start,#submit,#do-survey {
+#start,#submit,.do-survey {
     text-align: center;
 }

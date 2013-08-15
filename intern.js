@@ -37,7 +37,7 @@
         RECORD_ENDPOINT = '',
         $intro = $('#intro'),
         $question = $('#question').hide(),
-        $doSurvey = $('#do-survey'),
+        $doSurvey = $('.do-survey'),
         $demographics = $('#demographics').hide(),
         $demographicsQuestions = $('#demographics #questions'),
         $thanks = $('#thanks').hide(),
