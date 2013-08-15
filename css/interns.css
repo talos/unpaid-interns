@@ -66,6 +66,23 @@ h1 strong {
     margin: 0.5em;
     vertical-align: top;
 }
+
+#size-area {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+}
+
+div.answer {
+    width: 150px;
+    font-size: 0.8em;
+    padding: 0.5em !important;
+}
+
+path.line {
+    stroke: black;
+    stroke-width: 1px;
+}
 /*
 #flowchart .row .response.yes {
     left: 0px;
@@ -78,3 +95,20 @@ h1 strong {
 #flowchart .row .response.not-sure {
     left: 20px;
 }*/
+
+.node circle {
+    cursor: pointer;
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+
+.node text {
+    font-size: 11px;
+}
+
+path.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
