@@ -8,8 +8,8 @@
         <meta name="author" content="See CONTRIBUTORS.md">
         <meta property="og:title" content="Is your unpaid internship illegal?" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="http://blog.accursedware.com/unpaid-interns/" />
-        <meta property="og:description" content="The US Department of Labor has clear guidelines establishing the legality of an unpaid internship.  You probably should be gettin' paid." />
+        <meta property="og:url" content="http://www.internlaborrights.com/survey/" />
+        <meta property="og:description" content="The US Department of Labor has clear guidelines establishing the legality of an unpaid internship." />
         <meta property="og:image" content="http://blog.accursedware.com/unpaid-interns/preview.png" />
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,6 @@
         <link type="text/css" rel="stylesheet" href="css/bootstrap.css" />
         <link type="text/css" rel="stylesheet" href="css/bootstrap-responsive.css" />
         <link type="text/css" rel="stylesheet" href="css/interns.css" />
-        <link type="text/plain" href="data/questions.tsv" id="questions" />
 
         <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
         <!--[if lt IE 9]>
@@ -52,18 +51,18 @@
                       states and some municipalities have their own labor laws
                       that might be more stringent.</p>
 
-                      <p>This survey will help see how your internship matches up
+                      <p>These questions will help see how your internship matches up
                       against the federal standards.</p>
 
                       <p><i>Please note: This is not legal advice and is for
                         informational and entertainment purposes only.</i></p>
 
-                      <p>When completing this survey please answer the questions
-                      as they apply to just one internship (if you've done more
-                      than one), whether it is your current, most recent, or most
-                      demanding. We pledge to keep your identity confidential and
-                      will provide an option to register to receive a report of
-                      our results and/or join our mailing list at the end of the
+                      <p>Please answer the questions as they apply to just one
+                      internship (if you've done more than one), whether it is
+                      your current, most recent, or most demanding. We pledge
+                      to keep your identity confidential and will provide an
+                      option to register to receive a report of our results
+                      and/or join our mailing list at the end of the
                       survey.</p>
 
                       <div id="start">
@@ -83,6 +82,8 @@
 
                     <div id="endgame" style="display:none;">
                         <div id="fail">
+                          <p><strong>Quite possibly.</strong></p>
+
                           <p>Based on your answers it looks like your
                           internship might not meet the requirements
                           established by the U.S. Supreme Court for it to be
@@ -149,6 +150,8 @@
                         </div>
 
                         <div id="win">
+                          <p><strong>Probably not.</strong></p>
+
                           <p>Congratulations, it appears that you may engaged
                           in an unpaid internship that meets the federal
                           standard for it to be in compliance with the FLSA.
@@ -177,6 +180,8 @@
                         </div>
 
                         <div id="congress">
+                          <p><strong>Probably not.</strong></p>
+
                           <p>Congress — in generally applying the FLSA and
                           other workplace protections and civil rights laws to
                           its employees through the Congressional
@@ -186,44 +191,51 @@
                           rights and protections, if any, you may have.</p>
                         </div>
 
+                        <div id="do-survey">
+                          <p> <a class="btn" href="javascript:void(0)">Survey</a> </p>
+                          <p> <small>Please click above if you'd like to complete an optional survey.</small> </p>
+                        </div>
+
                         <div class="diagram">
                         </div>
-                            <!--
-                        <form id="survey" action="">
-                            <p>It&#39;s possible that your employer has used your labor illegally.</p>
-                            <p>Unfortunately, there isn&#39;t a standard process for reporting employers to the Department of Labor.  You could get in touch with your employer and ask for back pay; if they refuse or don&#39;t reply, then you can get in touch with your state's Department of Labor.</p>
-                            <p>Please consider sharing some basic information (anonymously, of course) about your employer and yourself, to help us shed light on where these practices are most widespread, and who they affect most.</p>
-
-                            <input type="submit" value="Submit" />
-                        </form>
-                            -->
                     </div>
 
-                    <hr noshade="noshade" />
-
-                    <div id="reset">
-                        <a class="btn btn-danger btn-mini" href="javascript:void(0)" style="display:none;">Reset</a>
-                    </div>
+                    <!--
+                    -->
                 </div>
             </div>
-            <br />
-            <div id="share">
-                <!-- AddThis Button BEGIN -->
-                <div class="addthis_toolbox addthis_default_style ">
-                    <a class="addthis_button_preferred_1"></a>
-                    <a class="addthis_button_preferred_2"></a>
-                    <a class="addthis_button_preferred_3"></a>
-                    <a class="addthis_button_preferred_4"></a>
-                    <a class="addthis_button_compact"></a>
-                    <a class="addthis_counter addthis_bubble_style"></a>
+            <div id="demographics">
+              <div class="row">
+                <div id="questions" class="span6 offset3">
                 </div>
-                <!-- AddThis Button END -->
+              </div>
+              <div class="row">
+                <div id="submit">
+                  <a class="btn" href="javascript:void(0)">Submit</a>
+                </div>
+              </div>
+            </div>
+            <div id="thanks" class="span6 offset3">
+              Thank you for participating!
+              <div id="reset">
+                <a class="btn btn-danger btn-mini" href="javascript:void(0)">Reset</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="span6 offset3">
+                <hr noshade />
+                <div id="share" class="span6 offset3">
+                  <div class="fb-like" data-href="http://www.internlaborrights.com/survey/" data-width="200" data-layout="button_count" data-show-faces="true" data-send="true"></div>
+                  <div>
+                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.internlaborrights.com/survey/" data-text="Is your unpaid internship illegal?" data-via="internlabor" data-related="internlabor">Tweet</a>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
 
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type='text/javascript' src="intern.js"></script>
-        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid=ra-4f8c46971561faa6"></script>
         <script type="text/javascript">
 
         var _gaq = _gaq || [];
@@ -237,5 +249,14 @@
         })();
 
         </script>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=343041869163051";
+          fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));</script>
     </body>
 </html>

@@ -1,0 +1,11 @@
+What field was your internship in? (publishing, fashion, graphic design, etc.)	<textarea />
+At what age did you begin your internship?	<input type="number" min="10" max="120" />
+What is your current age?	<input type="number" min="10" max="120" />
+What is your gender identity (e.g, male, female, transgender, genderqueer, etc.)	<input type="text" maxlength="30" />
+What racial and/or ethnic group(s) do you identify with (e.g, non-Hispanic White or Black, African-American, East Asian, South Asian, Latino, Hispanic, Pacific Islander, Indigenous peoples, etc.)?	<textarea />
+What other communities do you belong to/identify with? (e.g., immigrant or child of immigrant parents, single parent, working class family background, people with disabilities, etc.)	<textarea />
+What is your hometown (or current place of residence)?	<input type="text" />
+Did you relocate for your internship?	No	Yes
+Email address (this will not sign you up for any mailing list unless specified below)	<input type="text" />
+Would you like to receive information about the results of this survey?	No	Yes
+Would you like to sign up for our mailing list?	No	Yes

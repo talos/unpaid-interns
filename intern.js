@@ -26,6 +26,7 @@
 (function () {
     "use strict";
     var QUESTIONS_LOCATION = "data/questions.tsv",
+        DEMOGRAPHICS_LOCATION = "data/demographics.tsv",
         VERSION = "1",
         FIRST_QUESTION = "1",
         BUTTON_COLUMNS = ['Yes', 'No', "Not sure"],
@@ -36,17 +37,25 @@
         RECORD_ENDPOINT = '',
         $intro = $('#intro'),
         $question = $('#question').hide(),
+        $doSurvey = $('#do-survey'),
+        $demographics = $('#demographics').hide(),
+        $demographicsQuestions = $('#demographics #questions'),
+        $thanks = $('#thanks').hide(),
         $choices = $('#choices'),
         $endgame = $('#endgame'),
         $reset = $('#reset a'),
         $start = $('#start a'),
+        $submit = $('#submit a'),
         questions,
+        demographics,
 
         /**
          * Display the endgame scenario.
          */
         endgame = function (id) {
             $question.hide();
+            $doSurvey.show();
+            //$reset.hide();
             $('#' + id).show().parents().show();
         },
 
@@ -100,8 +109,6 @@
                             } else {
                                 endgame(nextId);
                             }
-                            // show the reset button after any click.
-                            $reset.fadeIn();
                         }).appendTo($choices);
                 }
             });
@@ -112,19 +119,62 @@
         // stateful
         questions = parseTSV(resp);
         $start.on('click', function () {
-            // hide the reset button at start
-            $reset.hide();
             $('div', $endgame).hide();
             $intro.slideUp();
             $question.show();
             ask(FIRST_QUESTION);
         });
         $reset.on('click', function () {
-            $reset.hide();
-            $endgame.slideUp('fast', function () {
+            $thanks.slideUp('fast', function () {
                 $intro.slideDown();
             });
-            $question.hide();
         });
+        $doSurvey.on('click', function () {
+            $endgame.slideUp('fast', function () {
+                $demographics.slideDown();
+            });
+        });
+        $submit.on('click', function () {
+            $demographics.slideUp('fast', function () {
+                $thanks.slideDown();
+            });
+        });
+    });
+
+    // load demographics (not shown immediately)
+    $.get(DEMOGRAPHICS_LOCATION).done(function (resp) {
+        var i, j, l, $q, $s,
+            submit = function (evt) {
+                var $el = $(evt.target),
+                    q = $el.parent().text(),
+                    a = $el.val();
+                if (q && a) {
+                    record($el.parent().text(), $el.val());
+                }
+            };
+        resp = resp.split('\n');
+        for (i = 0; i < resp.length; i += 1) {
+            l = resp[i].split('\t');
+            $q = $('<div />').text(l[0]);
+            // free response
+            if (l.length === 2) {
+                $s = $(l[1]);
+                if ($s.is('textarea')) {
+                    $q.append($s);
+                } else {
+                    $q.prepend($s);
+                }
+            // specific options
+            } else if (l.length > 2) {
+                $s = $('<select />')
+                    .append('<option value="" />')
+                    .appendTo($q);
+                for (j = 1; j < l.length; j += 1) {
+                    $s.append($('<option />').attr('value', l[j]).text(l[j]));
+                }
+            }
+            $s.on('blur', submit);
+            $demographicsQuestions.append($q);
+        }
     });
 }());
