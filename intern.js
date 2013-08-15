@@ -34,7 +34,8 @@
         BUTTON_TEMPLATE = '<button class="' + BUTTON_CLASSES + '" />',
         RECORD_HOST = 'http://intern-labor-survey.herokuapp.com/',
         RECORD_ENDPOINT = '',
-        $question = $('#question'),
+        $intro = $('#intro'),
+        $question = $('#question').hide(),
         $choices = $('#choices'),
         $endgame = $('#endgame'),
         $reset = $('#reset a'),
@@ -52,12 +53,15 @@
             .attr("height", h + m[0] + m[2])
             .append("svg:g")
             .attr("transform", "translate(" + m[3] + "," + m[0] + ")"),
+        $start = $('#start a'),
+        questions,
 
         /**
          * Display the endgame scenario.
          */
-        endgame = function () {
-            $endgame.show();
+        endgame = function (id) {
+            $question.hide();
+            $('#' + id).show().parents().show();
         },
 
         /**
@@ -138,7 +142,7 @@
          */
         ask = function (id, questions) {
             var question = questions[id];
-            $question.text(question[MESSAGE_COLUMN]);
+            $('.text', $question).text(question[MESSAGE_COLUMN]);
             $choices.empty();
             $.each(BUTTON_COLUMNS, function (i, button) {
                 var nextId = question[button];
@@ -147,12 +151,17 @@
                         .text(button)
                         .on('click', function () {
                             record(question[MESSAGE_COLUMN], button);
-                            ask(nextId);
+                            if (questions[nextId]) {
+                                ask(nextId);
+                            } else {
+                                endgame(nextId);
+                            }
                             // show the reset button after any click.
                             $reset.fadeIn();
                         }).appendTo($choices);
                 }
             });
+
             if ($choices.is(':empty')) {
                 endgame();
             }
@@ -354,9 +363,22 @@
     // load questions
     $.get(QUESTIONS_LOCATION).done(function (resp) {
         // stateful
-        var questions = parseTSV(resp);
-        start(FIRST_QUESTION, questions);
+        questions = parseTSV(resp);
         visualize(FIRST_QUESTION, questions);
-        $reset.on('click', start);
+        $start.on('click', function () {
+            // hide the reset button at start
+            $reset.hide();
+            $('div', $endgame).hide();
+            $intro.slideUp();
+            $question.show();
+            ask(FIRST_QUESTION);
+        });
+        $reset.on('click', function () {
+            $reset.hide();
+            $endgame.slideUp('fast', function () {
+                $intro.slideDown();
+            });
+            $question.hide();
+        });
     });
 }());
