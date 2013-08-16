@@ -7,6 +7,19 @@ body {
     text-align: justify;
 }
 
+#demographics #questions div {
+    padding-top: 1em;
+}
+
+#demographics #questions div input,select {
+    float: right;
+}
+
+#demographics #questions div textarea {
+    display: block;
+    width: 100%;
+}
+
 #question {
     text-align: center;
     font-size: 150%;
@@ -33,7 +46,11 @@ div.btn-group {
     text-align: center;
 }
 
-#share div {
+#share {
+    white-space:nowrap;
+}
+
+#share div,span {
     display: inline-block;
 }
 
@@ -118,6 +135,6 @@ path.link {
     stroke-width: 1.5px;
 }
 
-#start {
+#start,#submit,.do-survey {
     text-align: center;
 }
