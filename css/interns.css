@@ -101,40 +101,6 @@ div.answer {
     padding: 0.5em !important;
 }
 
-path.line {
-    stroke: black;
-    stroke-width: 1px;
-}
-/*
-#flowchart .row .response.yes {
-    left: 0px;
-}
-
-#flowchart .row .response.no {
-    left: 10px;
-}
-
-#flowchart .row .response.not-sure {
-    left: 20px;
-}*/
-
-.node circle {
-    cursor: pointer;
-    fill: #fff;
-    stroke: steelblue;
-    stroke-width: 1.5px;
-}
-
-.node text {
-    font-size: 11px;
-}
-
-path.link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 1.5px;
-}
-
 #start,#submit,.do-survey {
     text-align: center;
 }
