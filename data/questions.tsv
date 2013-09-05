@@ -20,10 +20,10 @@ ID	Message	Yes	No	Not sure
 5a	Is your employer dedicating any special resources (training, supervision) to your internship that could detract from their productivity?	6	9	6
 6	Are you guaranteed a job at your office when the internship is over?	9	7	6a
 6a	Is there a direct connection between your completion of the internship and a job offer?	9	7	6b
-6b	Does your organization consider the internship to be a "trial period" for your employment?	9	7
+6b	Does your organization consider the internship to be a &quot;trial period&quot; for your employment?	9	7	
 7	Were you notified prior to starting your position, in writing, that you will not receive wages and are not considered an employee?	win	9	
 8	Are you interning full-time?	fail	8a	
 8a	Have you been working part-time regularly for the long term — over six months?	fail	8b	
-8b	Is your internship for civic, humanitarian, or charitable purposes?	fail-not-for-profit	fail
-9	Were you interning for government?	9a	fail
-9a	Was it state or local, rather than federal, government?	fail-local	fail-federal
+8b	Is your internship for civic, humanitarian, or charitable purposes?	fail-not-for-profit	fail	
+9	Were you interning for government?	9a	fail	
+9a	Was it state or local, rather than federal, government?	fail-local	fail-federal	

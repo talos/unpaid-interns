@@ -187,7 +187,7 @@
          */
         ask = function (id, questions) {
             var question = questions[id];
-            $('.text', $question).text(question[MESSAGE_COLUMN]);
+            $('.text', $question).html(question[MESSAGE_COLUMN]);
             $choices.empty();
             $.each(BUTTON_COLUMNS, function (i, button) {
                 var nextId = question[button];
