@@ -9,19 +9,19 @@ svg {
 
 path.link {
     fill: none;
-    stroke: #000;
-    stroke-width: 2px;
+    stroke: #444;
+    stroke-width: 1px;
 }
 
 path.link.to {
     /*stroke-dasharray: 10,2;*/
-    stroke: red;
+    /*stroke: #b06f4a;*/
     stroke-width: 3px;
 }
 
 path.link.from {
     /*stroke-dasharray: 10,2;*/
-    stroke: blue;
+    /*stroke: #b06f4a;*/
     stroke-width: 3px;
 }
 
@@ -34,9 +34,15 @@ path.link.hidden {
 }
 
 circle.node {
-    stroke: black;
+    stroke: white;
     stroke-width: 1.5px;
-    fill: white;
+    fill: #4a6fb0;
+    -webkit-filter: drop-shadow( -5px -5px 5px #000 );
+            filter: drop-shadow( -5px -5px 5px #000 );
+}
+
+circle.terminal {
+    fill: #b06f4a;
 }
 
 text {
@@ -51,7 +57,13 @@ text.id {
 
 .foreign {
     font-size: 75%;
-    max-width: 100px;
     line-height: 1em;
-    padding: 1em;
+    background: transparent;
+    color: white;
+    /*font-family: Futura-CondensedExtraBold, Futura, Helvetica, Arial, sans-serif;*/
+    font-family: Futura;
+    font-weight: 100;
+    /*text-transform: uppercase;*/
+    /*font-weight: bold;*/
+    letter-spacing: 1px;
 }

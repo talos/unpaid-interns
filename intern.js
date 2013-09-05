@@ -44,14 +44,15 @@
         $choices = $('#choices'),
         $endgame = $('#endgame'),
         $reset = $('#reset a'),
-        width = 1300,
-        height = 3000,
+        width = 1000,
+        height = 1000,
         svg = d3.select('body')
             .append('svg')
             .attr('width', width)
             .attr('height', height),
         $start = $('#start a'),
         $submit = $('#submit a'),
+        squareInCircle = 1.8,
         questions,
         demographics,
 
@@ -87,20 +88,10 @@
 
         /**
          * Use the #size-area div to sample the dimensions required for some
-         * text.  .
+         * text
          */
         testOuterDimensions = function (text, classes) {
-            var $parent = $('#size-area'),
-                $testDiv = $('<div />')
-                    .text(text)
-                    .addClass(classes)
-                    .appendTo($parent),
-                dimensions = {
-                    width: $parent.outerWidth(),
-                    height: $parent.outerHeight()
-                };
-            $testDiv.remove();
-            return dimensions;
+            return Math.log(Math.pow(text.length, 3)) * 5;
         },
 
         /**
@@ -126,10 +117,12 @@
                     if (!node) {
                         node = {
                             id: q.ID,
-                            dim: testOuterDimensions(q.Message, 'foreign'),
+                            radius: testOuterDimensions(q.Message, 'foreign'),
                             text: q.Message,
                             y: 0,
                             x: width / 2,
+                            scale: 1,
+                            conflicts: 1,
                             from: [],
                             to: []
                         };
@@ -140,9 +133,9 @@
                             node.fixed = true;
                         }
 
-                        node.radius = Math.sqrt(Math.pow(node.dim.width, 2) +
-                                                Math.pow(node.dim.height, 2));
-                        node.angle = Math.atan(node.dim.height / node.dim.width) * 180 / Math.PI;
+                        //node.radius = Math.sqrt(Math.pow(node.dim.width, 2) +
+                                                //Math.pow(node.dim.height, 2));
+                        //node.angle = Math.atan(node.dim.height / node.dim.width) * 180 / Math.PI;
                         nodesObj[k] = node;
                         nodesAry.push(node);
                     }
@@ -210,25 +203,91 @@
             }
         },
 
+        // test whether two lines intersect (each line is a two-tuple of
+        // two-tuples)
+        // http://tog.acm.org/resources/GraphicsGems/gemsii/xlines.c
+        linesIntersect = function (line1, line2) {
+            var x1 = line1[0][0],
+                x2 = line1[1][0],
+                y1 = line1[0][1],
+                y2 = line1[1][1],
+                x3 = line2[0][0],
+                x4 = line2[1][0],
+                y3 = line2[0][1],
+                y4 = line2[1][1],
+
+                a1 = y2 - y1,
+                b1 = x1 - x2,
+                c1 = x2 * y1 - x1 * y2,
+
+                a2 = y4 - y3,
+                b2 = x3 - x4,
+                c2 = x4 * y3 - x3 * y4,
+
+                r1 = a2 * x1 + b2 * y1 + c2,
+                r2 = a2 * x2 + b2 * y2 + c2,
+                r3 = a1 * x3 + b1 * y3 + c1,
+                r4 = a1 * x4 + b1 * y4 + c1,
+
+                denom = a1 * b2 - a2 * b1,
+
+                offset = denom < 0 ? -denom / 2 : denom / 2,
+
+                xnum,
+                ynum;
+
+            // no intersection
+            if ((r3 < 0 && r4 < 0) || (r3 > 0 && r4 > 0)) {
+                return false;
+            }
+
+            // collinear
+            if (denom === 0) {
+                return false;
+            }
+
+            xnum = b1 * c2 - b2 * c1;
+            ynum = a2 * c1 - a1 * c2;
+
+            // calculate intersection point
+            return [(xnum < 0 ? xnum - offset : xnum + offset) / denom,
+                (ynum < 0 ? ynum - offset : ynum + offset) / denom];
+
+        },
+
         collide = function (node) {
-            var rDiv = 2,
-                r = node.radius / rDiv,
-                nx1 = node.x - r,
-                nx2 = node.x + r,
-                ny1 = node.y - r,
-                ny2 = node.y + r;
+            var nx1 = node.x,
+                nx2 = node.x + node.radius,
+                ny1 = node.y,
+                ny2 = node.y + node.radius;
             return function (quad, x1, y1, x2, y2) {
                 if (quad.point && (quad.point !== node)) {
                     var x = node.x - quad.point.x,
                         y = node.y - quad.point.y,
                         l = Math.sqrt(x * x + y * y),
-                        r = node.radius / rDiv + quad.point.radius / rDiv;
+                        r = ((node.radius * node.scale) + (quad.point.radius * quad.point.scale)) * 1.05;
                     if (l < r) {
-                        l = (l - r) / (l || 1) * 0.5;
+                        l = (l - r) / (l || 1) * 0.1;
                         node.x -= x *= l;
                         node.y -= y *= l;
                         quad.point.x += x;
                         quad.point.y += y;
+                        // only scale non-terminal points down,
+                        // favor scaling down non-essential nodes
+                        // don't scale stuff less than 50%
+                        if (node.to.length > 0 && node.from.length > 0
+                                && node.scale > 0.5) {
+                            node.scale *= 1 - (0.1 / (node.to.length +
+                                                      node.from.length));
+                        }
+                        if (quad.point.to.length > 0 && quad.point.from.length > 0
+                                && quad.point.scale > 0.5) {
+                            quad.point.scale *= 1 - (0.1 / (quad.point.to.length +
+                                                            quad.point.from.length));
+                        }
+                    } else {
+                        node.scale = node.scale < 1 ? node.scale * 1.005 : 1;
+                        quad.point.scale = quad.point.scale < 1 ? quad.point.scale * 1.005 : 1;
                     }
                 }
                 return x1 > nx2
@@ -264,6 +323,7 @@
          */
         visualize = function (first_question, questions) {
             var nodesAndLinks = toNodesAndLinks(questions, first_question),
+                force,
                 nodes = nodesAndLinks[0],
                 links = nodesAndLinks[1],
 
@@ -285,99 +345,52 @@
 
                 // update force layout (called automatically each iteration)
                 tick = function () {
-                    var i,
-                        j,
+                    var q = d3.geom.quadtree(nodes.concat(links)),
+                        edgePadding = 50,
                         n,
-                        f,
-                        t0,
-                        t1,
-                        cwidth,
-                        lowest,
-                        padding = 25,
-                        possibleY,
-                        len = nodes.length;
+                        i;
 
-                    for (i = 0; i < len; i += 1) {
+                    for (i = 0; i < nodes.length; i += 1) {
                         n = nodes[i];
-
-                        // Prevent vertical overlap
-                        for (j = 0; j < n.to.length; j += 1) {
-                            if (isLastSource(n, n.to[j].target)) {
-                                possibleY = n.y + n.dim.height + padding;
-                                n.to[j].target.y = possibleY > n.to[j].target.y ? possibleY : n.to[j].target.y;
-                            }
+                        if (n.x - (n.radius * n.scale) < edgePadding) {
+                            n.x = (n.x + edgePadding + n.radius * n.scale) / 2;
                         }
-
-                        cwidth = 0;
-                        for (j = 0; j < n.to.length; j += 1) {
-                            if (isLastSource(n, n.to[j].target)) {
-                                cwidth += n.to[j].target.dim.width + padding;
-                            }
+                        if (n.y - (n.radius * n.scale) < edgePadding) {
+                            n.y = (n.y + edgePadding + n.radius * n.scale) / 2;
                         }
-
-                        if (cwidth > 0) { // everything wasn't last source, or no targets
-                            cwidth -= padding;
-
-                            n.to[0].target.x = n.x + (n.dim.width / 2) - (cwidth / 2);
-
-                            // Don't allow children to overlap horizontally
-                            t1 = null;
-                            t0 = null;
-                            for (j = 0; j < n.to.length; j += 1) {
-                                t1 = n.to[j].target;
-                                if (isLastSource(n, t1)) {
-                                    if (t1 && t0) {
-                                        t1.x = t0.x + t0.dim.width + padding;
-                                    }
-                                    t0 = t1;
-                                } else {
-                                    t1 = null;
-                                }
-                            }
+                        if (n.x + n.radius > width - edgePadding) {
+                            n.x = (n.x - edgePadding + width - n.radius * n.scale) / 2;
+                        }
+                        if (n.y + n.radius > height - edgePadding) {
+                            n.y = (n.y - edgePadding + height - n.radius * n.scale) / 2;
                         }
                     }
 
-                    var q = d3.geom.quadtree(nodes);
-                    for (i = 0; i < 10; i += 1) {
-                        for (j = 0; j < nodes.length; j += 1) {
-                            q.visit(collide(nodes[j]));
-                        }
+                    for (i = 0; i < nodes.length; i += 1) {
+                        q.visit(collide(nodes[i]));
+                        //var x;
                     }
 
                     circle.attr('transform', function (d) {
-                        return 'translate(' + d.x + ',' + d.y + ')';
+                        return 'translate(' + d.x + ',' + d.y + ')' +
+                            'scale(' + d.scale +  ',' + d.scale + ')';
                     });
                     /*circle.attr("cx", function (d) { return d.x; })
                         .attr("cy", function (d) { return d.y; });*/
 
                     path.attr('d', function (d) {
 
-                        var sourceX = d.source.x + d.source.dim.width / 2,
-                            sourceY = d.source.y + d.source.dim.height / 2,
-                            targetX = d.target.x + d.target.dim.width / 2,
-                            targetY = d.target.y + d.target.dim.height / 2,
-                            sourceAngle = d.source.angle,
-                            targetAngle = d.target.angle,
-
-                            theta = Math.atan((targetY - sourceY) / (targetX - sourceX)),
-                            angle = theta * 180 / Math.PI;
-                            //invert = (targetX - sourceX) * (targetY - sourceY) < 0 ? -1 : 1;
-                            //invert = targetX - sourceX < 0 && targetY - sourceY < 0 ? -1 : 1;
-                            //invertSource = ?,
-                            //invertTarget = ?;
-
-                        if (angle < sourceAngle && angle > -sourceAngle) {
-                            sourceX += d.source.dim.width / 2 * (targetX - sourceX < 0 ? -1 : 1);
-                        } else {
-                            sourceY += d.source.dim.height / 2 * (targetY - sourceY < 0 ? -1 : 1);
-                        }
-
-                        if (angle < targetAngle && angle > -targetAngle) {
-                            targetX += d.target.dim.width / 2 * (targetX - sourceX < 0 ? 1 : -1);
-                        } else {
-                            targetY += d.target.dim.height / 2 * (targetY - sourceY < 0 ? 1 : -1);
-                        }
-
+                        var deltaX = d.target.x - d.source.x,
+                            deltaY = d.target.y - d.source.y,
+                            dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+                            normX = deltaX / dist,
+                            normY = deltaY / dist,
+                            sourcePadding = d.source.radius * d.source.scale,
+                            targetPadding = d.target.radius * d.target.scale,
+                            sourceX = d.source.x + (sourcePadding * normX),
+                            sourceY = d.source.y + (sourcePadding * normY),
+                            targetX = d.target.x - (targetPadding * normX),
+                            targetY = d.target.y - (targetPadding * normY);
                         return 'M' + sourceX + ',' + sourceY + 'L' + targetX + ',' + targetY;
                     });
 
@@ -427,15 +440,19 @@
             // add new nodes
             var g = circle.enter().append('svg:g');
 
-            g.append('svg:rect')
-                .attr('class', 'node')
-                .attr('width', function (d) { return d.dim.width; })
-                .attr('height', function (d) { return d.dim.height; });
-                //.attr('r', function (d) { return d.dim.width / 2; });
+            g.append('svg:circle')
+                .attr('class', function (d) {
+                    var klass = 'node';
+                    if (d.from.length === 0 || d.to.length === 0) {
+                        klass += ' terminal';
+                    }
+                    return klass;
+                })
+                .attr('r', function (d) { return d.radius; });
 
             g.append('svg:foreignObject')
-                .attr('width', function (d) { return d.dim.width; })
-                .attr('height', function (d) { return d.dim.height; })
+                .attr('width', function (d) { return d.radius * squareInCircle; })
+                .attr('height', function (d) { return d.radius * squareInCircle; })
                 .on('mouseover', function (d) {
                     var i, j, classes = ['from', 'to'];
                     for (i = 0; i < classes.length; i += 1) {
@@ -455,12 +472,12 @@
                         }
                     }
                 })
-                //.attr('x', function (d) { return -d.dim.width / 2; })
-                //.attr('y', function (d) { return -d.dim.height / 2; })
+                .attr('x', function (d) { return -d.radius * squareInCircle / 2; })
+                .attr('y', function (d) { return -d.radius * squareInCircle / 2; })
                 .each(function (d) {
                     var el = d3.select(this),
                         body = el.append('xhtml:body').classed('foreign', true);
-                    body.text(d.text);
+                    body.html(d.text);
                 });
 
             // show node IDs
@@ -476,14 +493,36 @@
             // set the graph in motion
 
             nodes.forEach(function (d, i) {
-                //d.x = Math.random() * width;
-                //d.y = height * i / nodes.length;
-                d.x = (width / 2) - (d.dim.width / 2);
-                d.y = 0;
+                d.x = Math.random() * width;
+                d.y = height * i / nodes.length;
+                //d.x = (width / 2) - (d.dim.width / 2);
+                //d.y = 0;
             });
 
-            d3.timer(tick);
-            //force.start();
+            //d3.timer(tick);
+            force = d3.layout.force()
+                .nodes(nodes)
+                .links(links)
+                .gravity(0)
+                // central node -- strong positive charge
+                .charge(function (d) {
+                    return ((d.from.length + d.to.length) * 20) - 500;
+                })
+                // central node -- long links
+                .linkDistance(function (link) {
+                    return (link.target.radius + link.source.radius +
+                        Math.pow(link.target.from.length, 2))
+                        * (link.target.conflicts + link.source.conflicts) / 2;
+                })
+                // central node -- strong links
+                /*.linkStrength(function (link) {
+                    return 10 / link.target.from.length;
+                })*/
+                .linkStrength(1)
+                .size([width, height])
+                .on('tick', tick);
+
+            force.start();
             /*for (i = 0; i < 10000; ++i) {
                 force.tick();
             }

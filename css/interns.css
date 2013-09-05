@@ -101,6 +101,10 @@ div.answer {
     padding: 0.5em !important;
 }
 
+.foreign {
+    text-align: center;
+}
+
 #start,#submit,.do-survey {
     text-align: center;
 }
