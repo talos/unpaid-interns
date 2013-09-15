@@ -1,5 +1,6 @@
 svg {
     background-color: #FFF;
+    position: relative;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -10,19 +11,31 @@ svg {
 path.link {
     fill: none;
     stroke: #444;
-    stroke-width: 1px;
+    stroke-width: 2px;
 }
+
+    path.link.yes {
+        stroke: #6fb04a;
+    }
+
+    path.link.no {
+        stroke: #b06f4a;
+    }
+
+    path.link.not-sure {
+        stroke: #bfbf4a;
+    }
 
 path.link.to {
     /*stroke-dasharray: 10,2;*/
     /*stroke: #b06f4a;*/
-    stroke-width: 3px;
+    stroke-width: 2px;
 }
 
 path.link.from {
     /*stroke-dasharray: 10,2;*/
     /*stroke: #b06f4a;*/
-    stroke-width: 3px;
+    stroke-width: 2px;
 }
 
 path.link.dragline {
@@ -56,14 +69,48 @@ text.id {
 }
 
 .foreign {
+}
+
+text.answer {
+    fill: white;
+    font-family: Futura;
+    font-weight: 100;
+    letter-spacing: 1px;
+    font-size: 100%;
+}
+
+circle.answer {
+    stroke: white;
+    stroke-width: 0.5px;
+    cursor: pointer;
+}
+
+    .answer.yes {
+        fill: #6fb04a;
+    }
+
+    .answer.no {
+        fill: #b06f4a;
+    }
+
+    .answer.not-sure {
+        fill: #bfbf4a;
+    }
+
+
+text.node {
     font-size: 75%;
     line-height: 1em;
     background: transparent;
-    color: white;
-    /*font-family: Futura-CondensedExtraBold, Futura, Helvetica, Arial, sans-serif;*/
+    fill: white;
     font-family: Futura;
     font-weight: 100;
-    /*text-transform: uppercase;*/
-    /*font-weight: bold;*/
     letter-spacing: 1px;
 }
+
+#text-measure {
+    position: absolute;
+    left: -10000px;
+    top: -10000px;
+}
+

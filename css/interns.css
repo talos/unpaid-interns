@@ -20,7 +20,7 @@ body {
     width: 100%;
 }
 
-#question {
+#question.text,#choices-container {
     text-align: center;
     font-size: 150%;
 }
@@ -66,43 +66,6 @@ h1 strong {
 .glow {
     border: 2px solid #ccc;
     box-shadow: 0px 0px 8px #ccc;
-}
-
-#flowchart {
-    width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#flowchart .row {
-    display: block;
-    padding: 3px;
-}
-
-#flowchart .row .response {
-    width: 140px;
-    font-size: 0.8em;
-    display: inline-block;
-    line-height: 1em;
-    padding: 0.5em;
-    margin: 0.5em;
-    vertical-align: top;
-}
-
-#size-area {
-    position: absolute;
-    left: -10000px;
-    top: -10000px;
-}
-
-div.answer {
-    width: 150px;
-    font-size: 0.8em;
-    padding: 0.5em !important;
-}
-
-.foreign {
-    text-align: center;
 }
 
 #start,#submit,.do-survey {
