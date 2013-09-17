@@ -48,10 +48,11 @@
         $flowchart = $('#flowchart'),
         width,
         height = 300,
-        edgePadding = 20,
+        edgePadding = 0,
         svg,
         $start = $('#start a'),
         $submit = $('#submit a'),
+        $toggleVisual = $('#toggle-visual'),
         squareInCircle = 1.7,
         showChildren,
         questions,
@@ -62,10 +63,9 @@
          */
         endgame = function (id) {
             $question.hide();
-            $doSurvey.show();
+            $doSurvey.slideDown();
             //$reset.hide();
-            $('#' + id).show().parents().show();
-            $flowchart.detach().appendTo($doSurvey);
+            $('#' + id).show().parents().slideDown();
         },
 
         /**
@@ -89,9 +89,10 @@
         },
 
         /**
-         * Determine radius needed for circle
+         * Determine radius needed for circle, and break text appropriately.
          *
-         * TODO: DRY out with the text rendering
+         * Returns a two-tuple [<radius needed>, <array of lines>], where
+         * the lines are [<[x offset in px, y offset in px]>, <string>].
          */
         determineRadius = function (allText) {
             var radius = 30;
@@ -100,11 +101,12 @@
                 var i,
                     lineHeight = 16,
                     padding = lineHeight / 2,
-                    h = padding / 2,
-                    r = radius - padding,
-                    maxWidth,
+                    h = padding,
+                    r = radius - padding * 2,
                     words = allText.split(/\s+/),
                     lastLineEndIdx = 0,
+                    lines = [],
+                    maxWidth,
                     text,
                     length;
 
@@ -114,22 +116,26 @@
 
                     textMeasure.textContent = (words.slice(lastLineEndIdx, i + 1).join(' '));
                     length = textMeasure.getComputedTextLength();
-                    maxWidth = 2 * Math.sqrt(h * (2 * r - h));
+                    if (h < r / 2) {
+                        maxWidth = 2 * Math.sqrt((h + lineHeight) * (2 * r - (h + lineHeight)));
+                    } else {
+                        maxWidth = 2 * Math.sqrt(h * (2 * r - h));
+                    }
                     if (length > maxWidth || i === words.length) {
                         text = words.slice(lastLineEndIdx, i).join(' ');
                         textMeasure.textContent = text;
-                        //.attr('x', -maxWidth / 2)
-                        //.attr('x', -length / 2)
                         lastLineEndIdx = i;
+                        lines.push([[-(textMeasure.getComputedTextLength() + padding) / 2,
+                                   h - r + padding], text]);
                         h += lineHeight;
                     }
                 }
 
-                if (h < radius * 2) {
-                    return radius;
+                if (h < r * 2) {
+                    return [radius, lines];
                 }
 
-                radius += 10;
+                radius += 5;
             }
         },
 
@@ -149,27 +155,41 @@
                     },
                         node = nodesObj[k],
                         target,
+                        message,
                         link,
+                        lines,
                         i,
                         r,
                         b;
                     if (!node) {
-                        r = determineRadius(q.Message);
+                        message = q.Message;
+                        // not a question, endgame instead look up the message
+                        // on page.
+                        if (message.split(' ').length === 1) {
+                            message = 'Is it illegal? ' +
+                                $('#' + message.split('-')[0]).text().split('.')[0] + '.';
+
+                            if (q.Message.split('-').length > 1) {
+                                message += $('#' + q.Message).text().split('.')[0] + '.';
+                            }
+                        }
+                        r = determineRadius(message);
+                        lines = r[1];
+                        r = r[0];
                         node = {
                             id: q.ID,
                             radius: r,
-                            text: q.Message,
+                            text: message,
+                            lines: lines,
                             y: edgePadding + r,
                             x: Math.random() * (width - (edgePadding * 2) - (r * 2))
                                 + edgePadding + r,
-                            scale: 1,
                             from: [],
                             to: []
                         };
 
                         // Fix first node at bottom
                         if (k === firstQuestion) {
-                            //node.x = width / 3;
                             node.y = height - edgePadding - r;
                             node.fixed = true;
                         }
@@ -296,47 +316,24 @@
         },
 
         collide = function (node, alpha) {
-            var nx1 = node.x - node.radius * node.scale,
-                nx2 = node.x + node.radius * node.scale,
-                ny1 = node.y - node.radius * node.scale,
-                ny2 = node.y + node.radius * node.scale;
+            var nx1 = node.x - node.radius,
+                nx2 = node.x + node.radius,
+                ny1 = node.y - node.radius,
+                ny2 = node.y + node.radius;
             return function (quad, x1, y1, x2, y2) {
                 if (quad.point && (quad.point !== node)) {
                     var x = node.x - quad.point.x,
                         y = node.y - quad.point.y,
                         l = Math.sqrt(x * x + y * y),
                         extraPad = 40,
-                        r = ((node.radius * node.scale) + (quad.point.radius * quad.point.scale)) + extraPad;
+                        r = node.radius + quad.point.radius + extraPad;
 
-                    // always expand hovering nodes
-                    if (node.hover) {
-                        node.scale = node.scale < 1 ? node.scale * 1.02 : 1;
-                    } else if (l < r) {
+                    if (l < r) {
                         l = (l - r) / (l || 1) * 0.1 * alpha;
-                        if (!node.hover) {
-                            node.x -= x *= l;
-                            node.y -= y *= l;
-                        }
-                        if (!quad.point.hover) {
-                            quad.point.x += x;
-                            quad.point.y += y;
-                        }
-                        // only scale non-terminal points down,
-                        // favor scaling down non-essential nodes
-                        // don't scale stuff less than 50%
-                        if (node.to.length > 0 && node.from.length > 0
-                                && node.scale > 0.7 && !node.hover) {
-                            node.scale *= 1 - (0.05 / (node.to.length +
-                                                      node.from.length));
-                        }
-                        if (quad.point.to.length > 0 && quad.point.from.length > 0
-                                && quad.point.scale > 0.7 && !quad.point.hover) {
-                            quad.point.scale *= 1 - (0.05 / (quad.point.to.length +
-                                                            quad.point.from.length));
-                        }
-                    } else {
-                        node.scale = node.scale < 1 ? node.scale * 1.005 : 1;
-                        quad.point.scale = quad.point.scale < 1 ? quad.point.scale * 1.005 : 1;
+                        node.x -= x *= l;
+                        node.y -= y *= l;
+                        quad.point.x += x;
+                        quad.point.y += y;
                     }
                 }
                 return x1 > nx2
@@ -358,16 +355,13 @@
                 links = [],
                 nodesObj = {},
                 linksObj = {},
-                //width = $('#survey').width(),
                 width = $(window).width(),
 
-                svg = d3.select('#flowchart')
+                svg = d3.select('#' + $flowchart.attr('id'))
                     .append('svg')
                     .attr('width', width)
                     .attr('height', height)
-                    .style({
-                        'left': -Math.round($('#survey div').position().left)
-                    }),
+                    .style({ left: -$('.container div').position().left }),
 
                 // handles to link and node element groups
                 questions = svg.append('svg:g').selectAll('g'),
@@ -380,22 +374,27 @@
                         n,
                         j,
                         i,
+                        width = $(window).width(),
                         lowestPoint = 0;
+
+                    if (Number(svg.attr('width')) !== width) {
+                        svg.attr('width', width)
+                            .style({ left: -$('.container div').position().left });
+                    }
 
                     // Hard edges except on top, which can stretch.
                     for (i = 0; i < nodes.length; i += 1) {
                         n = nodes[i];
-                        if (n.x - (n.radius * n.scale) < edgePadding) {
+                        if (n.x - n.radius < edgePadding) {
                             n.px = n.x;
-                            n.x = (n.x + edgePadding + n.radius * n.scale) / 2;
-                        } else if (n.x + n.radius * n.scale * 2 > width - edgePadding) {
+                            n.x = (n.x + edgePadding + n.radius) / 2;
+                        } else if (n.x + n.radius > width - edgePadding) {
                             n.px = n.x;
-                            n.x = (n.x - edgePadding + width - n.radius * n.scale * 2) / 2;
+                            n.x = (n.x + (width - edgePadding - n.radius)) / 2;
                         }
 
-                        d = n.y - edgePadding - (n.radius * n.scale);
+                        d = n.y - edgePadding - n.radius;
                         if (d < 0) {
-                            //n.y = (n.y + edgePadding + n.radius * n.scale) / 2;
 
                             // Expand "upwards" by pushing all nodes down.
                             for (j = 0; j < nodes.length; j += 1) {
@@ -406,7 +405,7 @@
                             svg.attr('height', Math.round(height));
                         } else if (n.y + n.radius > height - edgePadding) {
                             n.py = n.y;
-                            n.y = (n.y - edgePadding + height - n.radius * n.scale) / 2;
+                            n.y = (n.y - edgePadding + height - n.radius) / 2;
                         }
                     }
 
@@ -414,16 +413,15 @@
                         n = nodes[i];
                         q.visit(collide(n, evt.alpha));
                         // adjust svg to fit height
-                        if (n.y + n.radius * n.scale * 2 > lowestPoint) {
-                            lowestPoint = n.y + n.radius * n.scale * 2;
+                        if (n.y + n.radius > lowestPoint) {
+                            lowestPoint = n.y + n.radius;
                             height = lowestPoint;
                             svg.attr('height', Math.round(height));
                         }
                     }
 
                     questions.attr('transform', function (d) {
-                        return 'translate(' + d.x + ',' + d.y + ')' +
-                            'scale(' + d.scale +  ',' + d.scale + ')';
+                        return 'translate(' + d.x + ',' + d.y + ')';
                     });
 
                     path.each(function (d) {
@@ -433,8 +431,8 @@
                             dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
                             normX = deltaX / dist,
                             normY = deltaY / dist,
-                            sourcePadding = d.source.radius * d.source.scale,
-                            targetPadding = d.target.radius * d.target.scale,
+                            sourcePadding = d.source.radius,
+                            targetPadding = d.target.radius,
                             sourceX = d.source.x + (sourcePadding * normX),
                             sourceY = d.source.y + (sourcePadding * normY),
                             targetX = d.target.x - (targetPadding * normX),
@@ -457,12 +455,6 @@
                             .attr('y', sourceY + (7 * normY) + 6);
                     });
 
-                    if (svg.attr('width') !== $(window).width()) {
-                        svg.attr('width', Math.round($(window).width()));
-                        svg.style({
-                            left: -$('#share').position().left
-                        });
-                    }
                 };
 
             // set up initial conditions -- single visible node with stubs
@@ -496,32 +488,49 @@
                     d.target.visible = true;
                     d.expanded = true;
 
-                    var link, node, i;
+                    var link, i, j, n;
 
+                    // Un-fix all current nodes, and expand any links
+                    // that are now implicitly visible.
                     for (i = 0; i < nodes.length; i += 1) {
-                        nodes[i].fixed = false;
+                        n = nodes[i];
+                        n.fixed = false;
+                        for (j = 0; j < n.to.length; j += 1) {
+                            if (n.visible &&  n.to[j].target === d.target) {
+                                n.to[j].expanded = true;
+                            }
+                        }
                     }
 
+                    // Fix the newly appearing node
                     d.target.fixed = true;
                     d.target.py = d.target.y;
                     d.target.y += d.target.radius;
                     for (i = 0; i < d.target.to.length; i += 1) {
                         link = d.target.to[i];
-                        node = link.target;
+                        n = link.target;
                         if (!linksObj[link.id]) {
                             links.push(link);
                             linksObj[link.id] = link;
                         }
 
-                        if (!nodesObj[node.id]) {
-                            node.y = edgePadding + node.radius;
-                            node.x = (Math.random() * (width
+                        if (!nodesObj[n.id]) {
+                            n.y = edgePadding + n.radius;
+                            n.x = (Math.random() * (width
                                       - (edgePadding * 2)
-                                      - (node.radius * node.scale)))
-                                + edgePadding + node.radius * node.scale;
-                            node.fixed = true;
-                            nodes.push(node);
-                            nodesObj[node.id] = node;
+                                      - n.radius))
+                                + edgePadding + n.radius;
+                            n.fixed = true;
+                            nodes.push(n);
+                            nodesObj[n.id] = node;
+
+                            // Ensure links back to existing visible nodes
+                            // are also visible.
+                            for (j = 0; j < n.to.length; j += 1) {
+                                if (n.to[j].target.visible) {
+                                    n.to[j].expanded = true;
+                                }
+                            }
                         }
                     }
 
@@ -606,7 +615,6 @@
                     })
                     .on('mouseover', function (d) {
                         d.hover = true;
-                        restart();
                     })
                     .on('mouseout', function (d) {
                         d.hover = undefined;
@@ -655,36 +663,14 @@
                     // draw text using tspan inside the circle
                     .each(function (d) {
                         var $this = d3.select(this),
-                            i,
-                            lineHeight = 16,
-                            padding = lineHeight / 2,
-                            h = padding / 2,
-                            r = d.radius - padding,
-                            maxWidth,
-                            words = d.text.split(/\s+/),
-                            lastLineEndIdx = 0,
-                            text,
-                            length;
+                            lines = d.lines,
+                            i;
 
-                        for (i = 0; i < words.length + 1; i += 1) {
-                            // add words to tspan until out of space, then
-                            // go to new line (new tspan).
-
-                            textMeasure.textContent = (words.slice(lastLineEndIdx, i + 1).join(' '));
-                            length = textMeasure.getComputedTextLength();
-                            maxWidth = 2 * Math.sqrt(h * (2 * r - h));
-                            if (length > maxWidth || i === words.length) {
-                                text = words.slice(lastLineEndIdx, i).join(' ');
-                                textMeasure.textContent = text;
-                                $this.append('svg:tspan')
-                                    //.attr('x', -maxWidth / 2)
-                                    //.attr('x', -length / 2)
-                                    .attr('x', -(textMeasure.getComputedTextLength()) / 2)
-                                    .attr('y', h - r + padding)
-                                    .text(text);
-                                lastLineEndIdx = i;
-                                h += lineHeight;
-                            }
+                        for (i = 0; i < lines.length; i += 1) {
+                            $this.append('svg:tspan')
+                                .attr('x', lines[i][0][0])
+                                .attr('y', lines[i][0][1])
+                                .text(lines[i][1]);
                         }
                     });
 
@@ -730,6 +716,7 @@
                 .on('tick', tick);
 
             restart();
+            $(window).on('resize', restart);
 
         };
 
@@ -740,6 +727,7 @@
         visualize(FIRST_QUESTION, questions);
         $start.on('click', function () {
             $('div', $endgame).hide();
+            $flowchart.show();
             $intro.slideUp();
             $question.show();
             ask(FIRST_QUESTION, questions);
@@ -758,6 +746,18 @@
             $demographics.slideUp('fast', function () {
                 $thanks.slideDown();
             });
+        });
+        $toggleVisual.on('click', function (evt) {
+            evt.preventDefault();
+            var $svg = $('svg', $flowchart);
+            if ($svg.is(':visible')) {
+                $toggleVisual.text('Show visual');
+                $svg.slideUp();
+            } else {
+                $toggleVisual.text('Hide visual');
+                $svg.slideDown();
+            }
+            return false;
         });
     });
 

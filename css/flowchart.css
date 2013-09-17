@@ -1,3 +1,12 @@
+#flowchart {
+    display: none;
+    text-align: center;
+}
+
+#toggle-visual {
+    font-size: 9px;
+}
+
 svg {
     background-color: #FFF;
     position: relative;
@@ -99,17 +108,20 @@ circle.answer {
 
 
 text.node {
-    font-size: 75%;
-    line-height: 1em;
+    font-size: 14px;
     background: transparent;
     fill: white;
-    font-family: Futura;
+    font-family: Futura-CondensedMedium, Futura;
     font-weight: 100;
     letter-spacing: 1px;
 }
 
 #text-measure {
+    font-size: 14px;
+    font-family: Futura-CondensedMedium, Futura;
+    font-weight: 100;
     position: absolute;
+    letter-spacing: 1px;
     left: -10000px;
     top: -10000px;
 }
